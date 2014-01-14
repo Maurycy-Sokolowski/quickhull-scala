@@ -150,40 +150,23 @@ object QuickHull3D {
  */
 class QuickHull3D {
 
-  protected var findIndex: Int = -1
-
+  protected var findIndex = -1
   protected var charLength: Double = _
-
-  protected var debug: Boolean = false
-
+  protected var debug = false
   protected var pointBuffer = new Array[Vertex](0)
-
   protected var vertexPointIndices = new Array[Int](0)
-
-  private var discardedFaces = new Array[Face](3)
-
-  private var maxVtxs = new Array[Vertex](3)
-
-  private var minVtxs = new Array[Vertex](3)
-
-  protected var faces = new ArrayBuffer[Face]()
-
-  protected var horizon = new ArrayBuffer[HalfEdge]()
-
-  private var newFaces = new ListBuffer[Face]()
-
-  private var unclaimed = new VertexList()
-
-  private var claimed = new VertexList()
-
+  private val discardedFaces = new Array[Face](3)
+  private val maxVtxs = new Array[Vertex](3)
+  private val minVtxs = new Array[Vertex](3)
+  protected val faces = new ArrayBuffer[Face]()
+  protected val horizon = new ArrayBuffer[HalfEdge]()
+  private val newFaces = new ListBuffer[Face]()
+  private val unclaimed = new VertexList()
+  private val claimed = new VertexList()
   protected var numVertices: Int = _
-
   protected var numFaces: Int = _
-
   protected var numPoints: Int = _
-
   protected var explicitTolerance: Double = QuickHull3D.AUTOMATIC_TOLERANCE
-
   protected var tolerance: Double = _
 
   /**

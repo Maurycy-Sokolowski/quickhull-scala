@@ -92,7 +92,7 @@ class Face {
   var area: Double = _
 
   @BeanProperty
-  var centroid: Point3d = new Point3d()
+  var centroid = new Point3d()
 
   var planeOffset: Double = _
 
@@ -102,7 +102,7 @@ class Face {
 
   var next: Face = _
 
-  var mark: Int = VISIBLE
+  var mark = VISIBLE
 
   var outside: Vertex = _
 
