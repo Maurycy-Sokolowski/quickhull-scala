@@ -10,9 +10,6 @@
  */
 package com.vix.graphics.quickhull
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 /**
  * Maintains a double-linked list of vertices for use by QuickHull3D
  */
