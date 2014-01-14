@@ -109,18 +109,9 @@ class Vector3d {
    */
   def set(i: Int, value: Double) =
     i match {
-      case 0 => {
-        x = value
-        //break
-      }
-      case 1 => {
-        y = value
-        //break
-      }
-      case 2 => {
-        z = value
-        //break
-      }
+      case 0 => x = value
+      case 1 => y = value
+      case 2 => z = value
       case _ => {
         throw new ArrayIndexOutOfBoundsException(i)
       }

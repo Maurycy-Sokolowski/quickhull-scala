@@ -52,9 +52,7 @@ object QuickHull3D {
    * Precision of a double.
    */
   private val DOUBLE_PREC = 2.2204460492503131e-16
-
   private val NONCONVEX_WRT_LARGER_FACE = 1
-
   private val NONCONVEX = 2
 }
 
@@ -639,20 +637,19 @@ class QuickHull3D {
     }
     for (i <- 0 until numPoints) {
       val v = pointBuffer(i)
-      if (v == vtx(0) || v == vtx(1) || v == vtx(2) || v == vtx(3)) {
-        //continue
-      }
-      maxDist = tolerance
-      var maxFace: Face = null
-      for (k <- 0 until 4) {
-        val dist = tris(k).distanceToPlane(v.pnt)
-        if (dist > maxDist) {
-          maxFace = tris(k)
-          maxDist = dist
+      if (v != vtx(0) && v != vtx(1) && v != vtx(2) && v != vtx(3)) {
+        maxDist = tolerance
+        var maxFace: Face = null
+        for (k <- 0 until 4) {
+          val dist = tris(k).distanceToPlane(v.pnt)
+          if (dist > maxDist) {
+            maxFace = tris(k)
+            maxDist = dist
+          }
         }
-      }
-      if (maxFace != null) {
-        addPointToFace(v, maxFace)
+        if (maxFace != null) {
+          addPointToFace(v, maxFace)
+        }
       }
     }
   }

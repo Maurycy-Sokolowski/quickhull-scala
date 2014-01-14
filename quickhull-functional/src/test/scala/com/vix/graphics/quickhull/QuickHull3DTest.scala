@@ -97,10 +97,7 @@ class QuickHull3DTest {
     val len = indices1.length
     var j: Int = 0
     j = 0
-    while (j < len) {
-      if (indices1(0) == indices2(j)) {
-        //break
-      }
+    while (j < len && indices1(0) != indices2(j)) {
       j += 1
     }
     if (j == len) {
@@ -304,13 +301,8 @@ class QuickHull3DTest {
       val cf = checkFaces(i)
       var j: Int = 0
       j = 0
-      while (j < faceIndices.length) {
-        if (faceIndices(j) != null) {
-          if (faceIndicesEqual(cf, faceIndices(j))) {
-            faceIndices(j) = null
-            //break
-          }
-        }
+      while (j < faceIndices.length && faceIndices(j) != null && !faceIndicesEqual(cf, faceIndices(j))) {
+        faceIndices(j) = null
         j += 1
       }
       if (j == faceIndices.length) {
