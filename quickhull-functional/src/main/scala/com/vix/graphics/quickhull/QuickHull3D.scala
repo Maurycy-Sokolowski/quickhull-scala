@@ -148,24 +148,24 @@ object QuickHull3D {
  */
 class QuickHull3D {
 
-  protected var findIndex = -1
-  protected var charLength: Double = _
-  protected var debug = false
-  protected var pointBuffer = new Array[Vertex](0)
-  protected var vertexPointIndices = new Array[Int](0)
-  private val discardedFaces = new Array[Face](3)
-  private val maxVtxs = new Array[Vertex](3)
-  private val minVtxs = new Array[Vertex](3)
-  protected val faces = new ArrayBuffer[Face]()
-  protected val horizon = new ArrayBuffer[HalfEdge]()
-  private val newFaces = new ListBuffer[Face]()
-  private val unclaimed = new VertexList()
-  private val claimed = new VertexList()
-  protected var numVertices: Int = _
-  protected var numFaces: Int = _
-  protected var numPoints: Int = _
-  protected var explicitTolerance: Double = QuickHull3D.AUTOMATIC_TOLERANCE
-  protected var tolerance: Double = _
+  var findIndex = -1
+  var charLength: Double = _
+  var debug = false
+  var pointBuffer = new Array[Vertex](0)
+  var vertexPointIndices = new Array[Int](0)
+  val discardedFaces = new Array[Face](3)
+  val maxVtxs = new Array[Vertex](3)
+  val minVtxs = new Array[Vertex](3)
+  val faces = new ArrayBuffer[Face]()
+  val horizon = new ArrayBuffer[HalfEdge]()
+  val newFaces = new ListBuffer[Face]()
+  val unclaimed = new VertexList()
+  val claimed = new VertexList()
+  var numVertices: Int = _
+  var numFaces: Int = _
+  var numPoints: Int = _
+  var explicitTolerance: Double = QuickHull3D.AUTOMATIC_TOLERANCE
+  var tolerance: Double = _
 
   /**
    * Returns true if debugging is enabled.
