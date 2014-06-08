@@ -21,7 +21,7 @@ class Vertex {
   /**
    * Spatial point associated with this vertex.
    */
-  var pnt: Point3d = new Point3d()
+  var pnt = new Point3d()
 
   /**
    * Back index into an array.

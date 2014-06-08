@@ -14,11 +14,8 @@ import Face._
 import scala.reflect.{ BeanProperty, BooleanBeanProperty }
 
 object Face {
-
   val VISIBLE = 1
-
   val NON_CONVEX = 2
-
   val DELETED = 3
 
   def createTriangle(v0: Vertex, v1: Vertex, v2: Vertex): Face = createTriangle(v0, v1, v2, 0)
@@ -87,7 +84,7 @@ class Face {
   var he0: HalfEdge = _
 
   @BeanProperty
-  var normal: Vector3d = new Vector3d()
+  var normal = new Vector3d()
 
   var area: Double = _
 
