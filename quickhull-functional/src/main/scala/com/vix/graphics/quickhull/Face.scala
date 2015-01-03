@@ -11,7 +11,7 @@
 package com.vix.graphics.quickhull
 
 import Face._
-import scala.reflect.{ BeanProperty, BooleanBeanProperty }
+import scala.beans.{ BeanProperty, BooleanBeanProperty }
 
 object Face {
   val VISIBLE = 1
@@ -118,7 +118,7 @@ class Face {
     if (area < minArea) {
       println("area=" + area)
       var hedgeMax: HalfEdge = null
-      var lenSqrMax = 0.
+      var lenSqrMax = 0.0
       var hedge = he0
       do {
         val lenSqr = hedge.lengthSquared()
@@ -309,7 +309,7 @@ class Face {
 
   def checkConsistency() {
     var hedge = he0
-    var maxd = 0.
+    var maxd = 0.0
     var numv = 0
     if (numVerts < 3) {
       throw new RuntimeException("degenerate face: " + getVertexString)

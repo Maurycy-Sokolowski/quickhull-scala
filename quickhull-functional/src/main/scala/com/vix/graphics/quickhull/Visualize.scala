@@ -107,7 +107,7 @@ class Visualize extends Application with JfxUtils {
     points: List[Point3D],
     ptsColors: Array[Color]) {
 
-    val factor = 500.
+    val factor = 500.0
 
     val parent = new Group()
     parent.setTranslateX(factor / 2)

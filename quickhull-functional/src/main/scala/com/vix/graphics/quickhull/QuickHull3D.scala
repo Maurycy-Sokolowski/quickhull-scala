@@ -554,7 +554,7 @@ class QuickHull3D {
    * Creates the initial simplex from which the hull will be built.
    */
   protected def createInitialSimplex() {
-    var max = 0.
+    var max = 0.0
     var imax = 0
     for (i <- 0 until 3) {
       val diff = maxVtxs(i).pnt.get(i) - minVtxs(i).pnt.get(i)
@@ -573,7 +573,7 @@ class QuickHull3D {
     val diff02 = new Vector3d()
     val nrml = new Vector3d()
     val xprod = new Vector3d()
-    var maxSqr = 0.
+    var maxSqr = 0.0
     u01.sub(vtx(1).pnt, vtx(0).pnt)
     u01.normalize()
     for (i <- 0 until numPoints) {
@@ -590,7 +590,7 @@ class QuickHull3D {
       throw new IllegalArgumentException("Input points appear to be colinear")
     }
     nrml.normalize()
-    var maxDist = 0.
+    var maxDist = 0.0
     val d0 = vtx(2).pnt.dot(nrml)
     for (i <- 0 until numPoints) {
       val dist = Math.abs(pointBuffer(i).pnt.dot(nrml) - d0)
@@ -1016,7 +1016,7 @@ class QuickHull3D {
     if (!claimed.isEmpty) {
       val eyeFace = claimed.first().face
       var eyeVtx: Vertex = null
-      var maxDist = 0.
+      var maxDist = 0.0
       var vtx = eyeFace.outside
       while (vtx != null && vtx.face == eyeFace) {
         val dist = eyeFace.distanceToPlane(vtx.pnt)

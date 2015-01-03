@@ -10,7 +10,7 @@
  */
 package com.vix.graphics.quickhull
 
-object QhullTest extends Application {
+object QhullTest {
 
   var coords = Array()
 
@@ -20,26 +20,28 @@ object QhullTest extends Application {
   val tester = new QuickHull3DTest()
   hull = new QuickHull3D()
 
-  for (i <- 0 until 100) {
-    var pnts = tester.randomCubedPoints(100, 1.0, 0.5)
-    hull.setFromQhull(pnts, pnts.length / 3, false)
-    pnts = tester.addDegeneracy(QuickHull3DTest.VERTEX_DEGENERACY, pnts, hull)
-    hull.setFromQhull(pnts, pnts.length / 3, true)
-    if (!hull.check(System.out)) {
-      println("failed for qhull triangulated")
-    }
-    hull.setFromQhull(pnts, pnts.length / 3, false)
-    if (!hull.check(System.out)) {
-      println("failed for qhull regular")
-    }
-    hull.build(pnts, pnts.length / 3)
-    hull.triangulate()
-    if (!hull.check(System.out)) {
-      println("failed for QuickHull3D triangulated")
-    }
-    hull.build(pnts, pnts.length / 3)
-    if (!hull.check(System.out)) {
-      println("failed for QuickHull3D regular")
+  def main(args: Array[String]) {
+    for (i <- 0 until 100) {
+      var pnts = tester.randomCubedPoints(100, 1.0, 0.5)
+      hull.setFromQhull(pnts, pnts.length / 3, false)
+      pnts = tester.addDegeneracy(QuickHull3DTest.VERTEX_DEGENERACY, pnts, hull)
+      hull.setFromQhull(pnts, pnts.length / 3, true)
+      if (!hull.check(System.out)) {
+        println("failed for qhull triangulated")
+      }
+      hull.setFromQhull(pnts, pnts.length / 3, false)
+      if (!hull.check(System.out)) {
+        println("failed for qhull regular")
+      }
+      hull.build(pnts, pnts.length / 3)
+      hull.triangulate()
+      if (!hull.check(System.out)) {
+        println("failed for QuickHull3D triangulated")
+      }
+      hull.build(pnts, pnts.length / 3)
+      if (!hull.check(System.out)) {
+        println("failed for QuickHull3D regular")
+      }
     }
   }
 }
