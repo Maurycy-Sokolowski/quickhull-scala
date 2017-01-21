@@ -97,27 +97,6 @@ class Vector3d {
   }
 
   /**
-   * Sets a single element of this vector. Elements 0, 1, and 2 correspond to
-   * x, y, and z.
-   *
-   * @param i
-   *            element index
-   * @param value
-   *            element value
-   * @return element value throws ArrayIndexOutOfBoundsException if i is not
-   *         in the range 0 to 2.
-   */
-  def set(i: Int, value: Double) =
-    i match {
-      case 0 => x = value
-      case 1 => y = value
-      case 2 => z = value
-      case _ => {
-        throw new ArrayIndexOutOfBoundsException(i)
-      }
-    }
-
-  /**
    * Sets the values of this vector to those of v1.
    *
    * @param v1

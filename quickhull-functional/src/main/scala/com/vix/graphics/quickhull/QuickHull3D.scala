@@ -293,10 +293,7 @@ class QuickHull3D {
     null
   }
 
-  protected def setHull(coords: Array[Double],
-    nump: Int,
-    faceIndices: Array[Array[Int]],
-    numf: Int) {
+  protected def setHull(coords: Array[Double], nump: Int, faceIndices: Array[Array[Int]], numf: Int) {
     initBuffers(nump)
     setPoints(coords, nump)
     computeMaxAndMin()

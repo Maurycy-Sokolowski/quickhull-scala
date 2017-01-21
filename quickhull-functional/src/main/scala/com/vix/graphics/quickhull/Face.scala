@@ -52,8 +52,8 @@ object Face {
   def create(vtxArray: Array[Vertex], indices: Array[Int]): Face = {
     val face = new Face()
     var hePrev: HalfEdge = null
-    for (i <- 0 until indices.length) {
-      val he = new HalfEdge(vtxArray(indices(i)), face)
+    indices.foreach(idx => {
+      val he = new HalfEdge(vtxArray(idx), face)
       if (hePrev != null) {
         he.setPrev(hePrev)
         hePrev.setNext(he)
@@ -61,7 +61,7 @@ object Face {
         face.he0 = he
       }
       hePrev = he
-    }
+    })
     face.he0.setPrev(hePrev)
     hePrev.setNext(face.he0)
     face.computeNormalAndCentroid()

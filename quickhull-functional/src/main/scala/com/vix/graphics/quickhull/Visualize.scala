@@ -44,78 +44,50 @@ trait JfxUtils {
 }
 
 class Visualize extends Application with JfxUtils {
-
   var anchorX: Double = _
   var anchorY: Double = _
   var anchorAngle: Double = _
 
   override def start(primaryStage: Stage) {
     primaryStage.setTitle("Quickhull3D")
-    val points = Array.ofDim[Point3d](1000)
-    for (i <- 0 until points.length) {
+    val points = Array.fill(1000)({
       val z = Math.random * 2 - 1
       val t = Math.random * 2 * math.Pi
       val w = Math.sqrt(1 - z * z)
-      points(i) = new Point3d(w * math.cos(t), w * math.sin(t), z)
-    }
-    val hull = new QuickHull3D()
-    hull.build(points)
+      new Point3d(w * math.cos(t), w * math.sin(t), z)
+    })
+    val hull = new QuickHull3D() { build(points) }
     val l = getHull(hull)
     showFigure(primaryStage, l, null, null, null, null, null)
   }
 
   def getHull(hull: QuickHull3D): List[Point3D] = {
     val vertices = hull.getVertices
-    val faceIndices = hull.getFaces
-    var pts = new ListBuffer[Point3D]()
-    for (i <- 0 until faceIndices.length; k <- 0 until faceIndices(i).length) {
-      val idx = faceIndices(i)(k)
-      val p = new Point3D(vertices(idx).x.toFloat, vertices(idx).y.toFloat, vertices(idx).z.toFloat)
-      pts += p
-    }
-    pts.toList
-  }
-
-  def addCamera(scene: Scene): PerspectiveCamera = {
-    val perspectiveCamera = new PerspectiveCamera(false)
-    scene.setCamera(perspectiveCamera)
-    perspectiveCamera
+    hull.getFaces.foldLeft(List[Point3D]())((l, f) => f.foldLeft(l)((ll, ff) => ll ++ List(new Point3D(vertices(ff).x.toFloat, vertices(ff).y.toFloat, vertices(ff).z.toFloat))))
   }
 
   def getSphere(c: Color, radius: Double): Sphere = {
-
-    val sphereMaterial = new PhongMaterial()
-
-    if (c == null) {
-      sphereMaterial.setDiffuseColor(Color.BISQUE)
-      sphereMaterial.setSpecularColor(Color.LIGHTBLUE)
-    } else {
-      sphereMaterial.setDiffuseColor(c)
-      sphereMaterial.setSpecularColor(c)
-
+    new Sphere(radius) {
+      setMaterial(new PhongMaterial() {
+        if (c == null) {
+          setDiffuseColor(Color.BISQUE)
+          setSpecularColor(Color.LIGHTBLUE)
+        } else {
+          setDiffuseColor(c)
+          setSpecularColor(c)
+        }
+      })
     }
-    val s = new Sphere(radius)
-    s.setMaterial(sphereMaterial)
-    return s
   }
 
-  def showFigure(primaryStage: Stage,
-    vertices: List[Point3D],
-    vrtxColors: Array[Color],
-    lines: List[Cylinder],
-    lineColors: Array[Color],
-    points: List[Point3D],
-    ptsColors: Array[Color]) {
-
+  def showFigure(primaryStage: Stage, vertices: List[Point3D], vrtxColors: Array[Color], lines: List[Cylinder], lineColors: Array[Color], points: List[Point3D], ptsColors: Array[Color]) {
     val factor = 500.0
-
-    val parent = new Group()
-    parent.setTranslateX(factor / 2)
-    parent.setTranslateY(factor / 2)
-    parent.setTranslateZ(0)
-
-    parent.setRotationAxis(new Point3D(1, 1, 1))
-
+    val parent = new Group() {
+      setTranslateX(factor / 2)
+      setTranslateY(factor / 2)
+      setTranslateZ(0)
+      setRotationAxis(new Point3D(1, 1, 1))
+    }
     if (lines != null) {
       var i = 0
       for (pla <- lines) {
@@ -124,13 +96,11 @@ class Visualize extends Application with JfxUtils {
         parent.getChildren().add(pla)
       }
     }
-
     if (vertices != null) {
-
       var idx = 0
       for (p <- vertices) {
-        val sphere = getSphere(if (vrtxColors == null) Color.RED else vrtxColors(idx), 0.02f * factor)
         idx += 1
+        val sphere = getSphere(if (vrtxColors == null) Color.RED else vrtxColors(idx), 0.01f * factor)
         sphere.setTranslateX(factor / 2 + p.getX() * factor)
         sphere.setTranslateY(factor / 2 + p.getY() * factor)
         sphere.setTranslateZ(factor / 2 + p.getZ() * factor)
@@ -141,37 +111,32 @@ class Visualize extends Application with JfxUtils {
     if (points != null) {
       var i = 0
       for (p <- points) {
-        val sphere = getSphere(if (ptsColors == null) Color.RED else ptsColors(i), 0.1f)
         i += 1
+        val sphere = getSphere(if (ptsColors == null) Color.RED else ptsColors(i), 0.1f)
         sphere.setTranslateX(p.getX())
         sphere.setTranslateY(p.getY())
         sphere.setTranslateZ(p.getZ())
         parent.getChildren().add(sphere)
       }
     }
-
-    val root = new Group(parent)
-    val scene = new Scene(root, 1024, 768, true)
-
-    scene.setOnMousePressed(mkEventHandler((event: MouseEvent) => {
-      anchorX = event.getSceneX()
-      anchorY = event.getSceneY()
-      anchorAngle = parent.getRotate()
-    }))
-
-    scene.setOnMouseDragged(mkEventHandler((event: MouseEvent) => {
-      parent.setRotate(anchorAngle + anchorX - event.getSceneX())
-    }))
-
-    val pointLight = new PointLight(Color.ANTIQUEWHITE)
-    pointLight.setTranslateX(factor)
-    pointLight.setTranslateY(-factor)
-    pointLight.setTranslateZ(-factor)
-
-    root.getChildren().add(pointLight)
-
-    addCamera(scene)
-    primaryStage.setScene(scene)
+    val root = new Group(parent) {
+      getChildren().add(new PointLight(Color.ANTIQUEWHITE) {
+        setTranslateX(factor)
+        setTranslateY(-factor)
+        setTranslateZ(-factor)
+      })
+    }
+    primaryStage.setScene(new Scene(root, 1024, 768, true) {
+      setOnMousePressed(mkEventHandler((event: MouseEvent) => {
+        anchorX = event.getSceneX()
+        anchorY = event.getSceneY()
+        anchorAngle = parent.getRotate()
+      }))
+      setOnMouseDragged(mkEventHandler((event: MouseEvent) => {
+        parent.setRotate(anchorAngle + anchorX - event.getSceneX())
+      }))
+      setCamera(new PerspectiveCamera(false))
+    })
     primaryStage.show()
   }
 }
