@@ -25,6 +25,9 @@ import javafx.scene.shape.Sphere
 import javafx.scene.paint.Material
 import javafx.scene.PointLight
 import javafx.scene.shape.Cylinder
+import javafx.scene.shape.TriangleMesh
+import javafx.scene.shape.MeshView
+import javafx.scene.shape.DrawMode
 import javafx.event.Event
 import javafx.event.EventHandler
 import scala.util.{ Try, Success, Failure }
@@ -57,9 +60,14 @@ class Visualize extends Application with JfxUtils {
       val w = Math.sqrt(1 - z * z)
       new Point3d(w * math.cos(t), w * math.sin(t), z)
     })
-    val hull = new QuickHull3D() { build(points) }
+    val hull = new QuickHull3D() {
+      build(points)
+      triangulate
+    }
+    val vertices = hull.getVertices
+    val vert3D = hull.getFaces.map(f => f.map(idx => new Point3D(vertices(idx).x.toFloat, vertices(idx).y.toFloat, vertices(idx).z.toFloat)))
     val l = getHull(hull).map(p => (p, Color.RED))
-    showFigure(primaryStage, l, null, null)
+    showFigure(primaryStage, l, vert3D)
   }
 
   def getHull(hull: QuickHull3D): List[Point3D] = {
@@ -70,38 +78,60 @@ class Visualize extends Application with JfxUtils {
   def getSphere(c: Color, radius: Double): Sphere = {
     new Sphere(radius) {
       setMaterial(new PhongMaterial() {
-        if (c == null) {
-          setDiffuseColor(Color.BISQUE)
-          setSpecularColor(Color.LIGHTBLUE)
-        } else {
-          setDiffuseColor(c)
-          setSpecularColor(c)
-        }
+        setDiffuseColor(c)
+        setSpecularColor(c)
       })
     }
   }
 
-  def showFigure(primaryStage: Stage, vertices: List[(Point3D, Color)], lines: List[(Cylinder, Color)], points: List[(Point3D, Color)]) {
-    val factor = 500.0
+  def showFigure(primaryStage: Stage, vertices: List[(Point3D, Color)], triangles: Array[Array[Point3D]]) {
+    val factor = 500f
     val parent = new Group() {
       setTranslateX(factor / 2)
       setTranslateY(factor / 2)
       setTranslateZ(0)
       setRotationAxis(new Point3D(1, 1, 1))
-      Try(lines.foreach(ll => getChildren().add(ll._1)))
       Try(vertices.foreach(v => {
         val sphere = getSphere(v._2, 0.01f * factor)
         sphere.setTranslateX(factor / 2 + v._1.getX() * factor)
         sphere.setTranslateY(factor / 2 + v._1.getY() * factor)
         sphere.setTranslateZ(factor / 2 + v._1.getZ() * factor)
-        getChildren().add(sphere)
+        getChildren.add(sphere)
       }))
-      Try(points.foreach(p => {
-        val sphere = getSphere(p._2, 0.1f)
-        sphere.setTranslateX(p._1.getX())
-        sphere.setTranslateY(p._1.getY())
-        sphere.setTranslateZ(p._1.getZ())
-        getChildren().add(sphere)
+      Try(triangles.foreach(p => {
+        val pp = p.map(x => Array(x.getX.asInstanceOf[Float], x.getY.asInstanceOf[Float], x.getZ.asInstanceOf[Float])).flatten
+        val mesh = new TriangleMesh {
+          getTexCoords.addAll(
+            0.5f, 0.5f, // t0 (it0 = 0)
+            0.0f, 1.0f, // t1 (it1 = 1)
+            1.0f, 1.0f // t2 (it2 = 2)
+            )
+          getFaces.addAll(
+            0, 0, 2, 2, 1, 1, // iv0, it0, iv2, it2, iv1, it1 (front face)
+            0, 0, 1, 1, 2, 2 // iv0, it0, iv1, it1, iv2, it2 back face
+            )
+          getPoints.addAll(
+            pp(0) * factor,
+            pp(1) * factor,
+            pp(2) * factor,
+            pp(3) * factor,
+            pp(4) * factor,
+            pp(5) * factor,
+            pp(6) * factor,
+            pp(7) * factor,
+            pp(8) * factor)
+        }
+        val triangle = new MeshView(mesh) {
+          setDrawMode(DrawMode.FILL);
+          setMaterial(new PhongMaterial() {
+            setDiffuseColor(Color.BISQUE)
+            setSpecularColor(Color.LIGHTBLUE)
+          })
+          setTranslateX(factor / 2)
+          setTranslateY(factor / 2)
+          setTranslateZ(factor / 2)
+        }
+        getChildren.add(triangle)
       }))
     }
     val root = new Group(parent) {
