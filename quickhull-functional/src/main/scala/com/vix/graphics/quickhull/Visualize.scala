@@ -27,6 +27,7 @@ import javafx.scene.PointLight
 import javafx.scene.shape.Cylinder
 import javafx.event.Event
 import javafx.event.EventHandler
+import scala.util.{ Try, Success, Failure }
 
 object Visualize {
 
@@ -57,8 +58,8 @@ class Visualize extends Application with JfxUtils {
       new Point3d(w * math.cos(t), w * math.sin(t), z)
     })
     val hull = new QuickHull3D() { build(points) }
-    val l = getHull(hull)
-    showFigure(primaryStage, l, null, null, null, null, null)
+    val l = getHull(hull).map(p => (p, Color.RED))
+    showFigure(primaryStage, l, null, null)
   }
 
   def getHull(hull: QuickHull3D): List[Point3D] = {
@@ -80,44 +81,28 @@ class Visualize extends Application with JfxUtils {
     }
   }
 
-  def showFigure(primaryStage: Stage, vertices: List[Point3D], vrtxColors: Array[Color], lines: List[Cylinder], lineColors: Array[Color], points: List[Point3D], ptsColors: Array[Color]) {
+  def showFigure(primaryStage: Stage, vertices: List[(Point3D, Color)], lines: List[(Cylinder, Color)], points: List[(Point3D, Color)]) {
     val factor = 500.0
     val parent = new Group() {
       setTranslateX(factor / 2)
       setTranslateY(factor / 2)
       setTranslateZ(0)
       setRotationAxis(new Point3D(1, 1, 1))
-    }
-    if (lines != null) {
-      var i = 0
-      for (pla <- lines) {
-        val colorsArray = lineColors(i)
-        i += 1
-        parent.getChildren().add(pla)
-      }
-    }
-    if (vertices != null) {
-      var idx = 0
-      for (p <- vertices) {
-        idx += 1
-        val sphere = getSphere(if (vrtxColors == null) Color.RED else vrtxColors(idx), 0.01f * factor)
-        sphere.setTranslateX(factor / 2 + p.getX() * factor)
-        sphere.setTranslateY(factor / 2 + p.getY() * factor)
-        sphere.setTranslateZ(factor / 2 + p.getZ() * factor)
-        parent.getChildren().add(sphere)
-      }
-    }
-
-    if (points != null) {
-      var i = 0
-      for (p <- points) {
-        i += 1
-        val sphere = getSphere(if (ptsColors == null) Color.RED else ptsColors(i), 0.1f)
-        sphere.setTranslateX(p.getX())
-        sphere.setTranslateY(p.getY())
-        sphere.setTranslateZ(p.getZ())
-        parent.getChildren().add(sphere)
-      }
+      Try(lines.foreach(ll => getChildren().add(ll._1)))
+      Try(vertices.foreach(v => {
+        val sphere = getSphere(v._2, 0.01f * factor)
+        sphere.setTranslateX(factor / 2 + v._1.getX() * factor)
+        sphere.setTranslateY(factor / 2 + v._1.getY() * factor)
+        sphere.setTranslateZ(factor / 2 + v._1.getZ() * factor)
+        getChildren().add(sphere)
+      }))
+      Try(points.foreach(p => {
+        val sphere = getSphere(p._2, 0.1f)
+        sphere.setTranslateX(p._1.getX())
+        sphere.setTranslateY(p._1.getY())
+        sphere.setTranslateZ(p._1.getZ())
+        getChildren().add(sphere)
+      }))
     }
     val root = new Group(parent) {
       getChildren().add(new PointLight(Color.ANTIQUEWHITE) {
