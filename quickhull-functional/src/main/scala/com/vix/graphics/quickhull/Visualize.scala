@@ -54,7 +54,7 @@ class Visualize extends Application with JfxUtils {
 
   override def start(primaryStage: Stage) {
     primaryStage.setTitle("Quickhull3D")
-    val points = Array.fill(1000)({
+    val points = Array.fill(2000)({
       val z = Math.random * 2 - 1
       val t = Math.random * 2 * math.Pi
       val w = Math.sqrt(1 - z * z)
